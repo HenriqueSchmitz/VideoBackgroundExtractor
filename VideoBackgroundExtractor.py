@@ -90,7 +90,7 @@ class VideoBackgroundExtractor:
     differenceIndex = torch.div(differenceMean, 255)
     if differenceIndex <= differenceIndexLimit:
       differenceThreshold = torch.mul(differenceMean, thresholdFactor)
-      thresholdedDifference = torch.where(differenceTensor > differenceMean, 1, 0)
+      thresholdedDifference = torch.where(differenceTensor > differenceThreshold, 1, 0)
     else:
       thresholdedDifference = torch.ones(differenceTensor.size())
       if self.__isGpuAvailable:
