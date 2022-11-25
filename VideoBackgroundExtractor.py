@@ -56,7 +56,7 @@ class VideoBackgroundExtractor:
   def __getDifferenceToBackgroundCpu(self, image):
       imageTensor = torch.from_numpy(image).to(torch.int16)
       differenceTensor = self.__getDifferenceTensor(imageTensor)
-      return addedFrame.numpy()
+      return differenceTensor.numpy()
 
   def __getDifferenceTensor(self, imageTensor):
       differencePerColorTensor = torch.abs(torch.subtract(imageTensor, self.__backgroundTensor))
