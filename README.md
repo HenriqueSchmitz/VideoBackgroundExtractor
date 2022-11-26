@@ -25,7 +25,7 @@ extractor.loadVideo(video)
 background = extractor.getBackgroundFrame()
 ```
 
-**Background Extracted from Video**
+**Background Extracted from Video:**
 ![Background from Video](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/background.png)
 
 Getting image with difference to background:
@@ -34,7 +34,7 @@ Getting image with difference to background:
 frameDifference = extractor.getDifferenceToBackground(exampleFrame)
 ```
 
-**Difference to Background**
+**Difference to Background:**
 ![Difference to Background](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/differenceToBackground.png)
 
 Getting example image with background removed:
@@ -43,5 +43,5 @@ Getting example image with background removed:
 noBackgroundFrame = extractor.removeBackground(exampleFrame)
 ```
 
-**Image with no Background**
+**Image with no Background:**
 ![No Background Image](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/noBackgroundImage.png)
