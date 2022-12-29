@@ -106,6 +106,9 @@ class VideoBackgroundExtractor:
     imageTensor = torch.from_numpy(image)
     if self.__isGpuAvailable:
       imageTensor = imageTensor.cuda()
+    return self.__calculateDifferenceIndex(imageTensor)
+
+  def __calculateDifferenceIndex(self, imageTensor):
     differenceTensor = self.__getDifferenceTensor(imageTensor.to(torch.int16))
     differenceMean = torch.div(torch.mean(differenceTensor.double()), 255)
     return differenceMean.item()
