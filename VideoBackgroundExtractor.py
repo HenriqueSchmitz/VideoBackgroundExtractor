@@ -21,7 +21,7 @@ class VideoBackgroundExtractor:
     while medianDifference.item() > maximumMedianDifference and numberOfRetries <= maximumRetries:
       numberOfRetries = numberOfRetries + 1
       goodFramesTensor = self.__filterFramesBelowMedian(framesTensor, frameDifferencesTensor, medianDifference)
-      framesTensor = self.__completeTensorWithNewFrames(goodFramesTensor, numberOfFramesToUse)
+      framesTensor = self.__completeTensorWithNewFrames(video, goodFramesTensor, numberOfFramesToUse)
       median = torch.median(framesTensor, dim = 0)
       self.__backgroundTensor = median.values
       frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
@@ -56,7 +56,7 @@ class VideoBackgroundExtractor:
     goodFramesTensor = framesTensor[indices]
     return goodFramesTensor
 
-  def __completeTensorWithNewFrames(self, goodFramesTensor, numberOfFramesToUse):
+  def __completeTensorWithNewFrames(self, video, goodFramesTensor, numberOfFramesToUse):
     amountOfGoodFrames = goodFramesTensor.size()[0]
     framesToGet = numberOfFramesToUse - amountOfGoodFrames
     newFramesTensor = self.__getRandomFramesTensorFromVideo(video, framesToGet)
