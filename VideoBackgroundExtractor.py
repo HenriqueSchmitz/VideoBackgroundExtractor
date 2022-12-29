@@ -8,12 +8,31 @@ class VideoBackgroundExtractor:
     self.__isGpuAvailable = torch.cuda.is_available();
 
   def loadVideo(self, video, numberOfFramesToUse = 25):
+    framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
+    median = torch.median(framesTensor, dim = 0)
+    self.__backgroundTensor = median.values
+
+  def loadVideoResiliently(self, video, numberOfFramesToUse = 25, maximumMedianDifference = 0.1, maximumRetries = 10):
+    framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
+    median = torch.median(framesTensor, dim = 0)
+    self.__backgroundTensor = median.values
+    frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
+    numberOfRetries = 1
+    while medianDifference.item() > maximumMedianDifference and numberOfRetries <= maximumRetries:
+      numberOfRetries = numberOfRetries + 1
+      goodFramesTensor = self.__filterFramesBelowMedian(framesTensor, frameDifferencesTensor, medianDifference)
+      framesTensor = self.__completeTensorWithNewFrames(goodFramesTensor, numberOfFramesToUse)
+      median = torch.median(framesTensor, dim = 0)
+      self.__backgroundTensor = median.values
+      frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
+
+  def __getRandomFramesTensorFromVideo(self, video, numberOfFramesToUse):
     frames = self.__getRandomFramesFromVideo(video, numberOfFramesToUse)
+    # Conversion to numpy array significantly improves performance for conversion to tensor
     framesTensor = torch.from_numpy(np.asarray(frames))
     if self.__isGpuAvailable:
       framesTensor = framesTensor.cuda()
-    median = torch.median(framesTensor, dim = 0)
-    self.__backgroundTensor = median.values
+    return framesTensor
 
   def __getRandomFramesFromVideo(self, video, numberOfFramesToUse):
     previousPosition = video.get(cv2.CAP_PROP_POS_FRAMES)
@@ -25,6 +44,24 @@ class VideoBackgroundExtractor:
         frames.append(frame)
     video.set(cv2.CAP_PROP_POS_FRAMES, previousPosition)
     return frames
+
+  def __calculateFrameDifferences(self, framesTensor):
+    frameDifferencesTensor = torch.tensor([self.__calculateDifferenceIndex(frameTensor) for frameTensor in framesTensor])
+    medianDifference = torch.median(frameDifferencesTensor)
+    return frameDifferencesTensor, medianDifference
+
+  def __filterFramesBelowMedian(self, framesTensor, frameDifferencesTensor, medianDifference):
+    mask = frameDifferencesTensor <= medianDifference.item()
+    indices = torch.nonzero(mask).permute(1,0)[0]
+    goodFramesTensor = framesTensor[indices]
+    return goodFramesTensor
+
+  def __completeTensorWithNewFrames(self, goodFramesTensor, numberOfFramesToUse):
+    amountOfGoodFrames = goodFramesTensor.size()[0]
+    framesToGet = numberOfFramesToUse - amountOfGoodFrames
+    newFramesTensor = self.__getRandomFramesTensorFromVideo(video, framesToGet)
+    framesTensor = torch.cat((goodFramesTensor, newFramesTensor))
+    return framesTensor
   
   def loadBackground(self, backgroundImage):
     self.__backgroundTensor = torch.from_numpy(backgroundImage)
