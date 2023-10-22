@@ -26,6 +26,13 @@ class VideoBackgroundExtractor:
       self.__backgroundTensor = median.values
       frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
 
+  def isVideoCameraStatic(self, video, numberOfFramesToUse = 25, maximumMedianDifference = 0.1):
+    framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
+    median = torch.median(framesTensor, dim = 0)
+    self.__backgroundTensor = median.values
+    frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
+    return medianDifference.item() <= maximumMedianDifference
+
   def __getRandomFramesTensorFromVideo(self, video, numberOfFramesToUse):
     frames = self.__getRandomFramesFromVideo(video, numberOfFramesToUse)
     # Conversion to numpy array significantly improves performance for conversion to tensor
