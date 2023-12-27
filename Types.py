@@ -1,4 +1,6 @@
-from typing import TypeAlias, List
+from typing import List, NewType
+import cv2
 
-Image: TypeAlias = List[List[List[int]]]
-MonochromeImage: TypeAlias = List[List[int]]
+Image = List[List[List[int]]]
+MonochromeImage = List[List[int]]
+VideoCapture = NewType("VideoCapture", cv2.VideoCapture)

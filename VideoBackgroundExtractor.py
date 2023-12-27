@@ -1,4 +1,4 @@
-from .Types import Image, MonochromeImage
+from .Types import Image, MonochromeImage, VideoCapture
 from typing import List, Tuple
 import numpy as np
 import torch
@@ -9,12 +9,12 @@ class VideoBackgroundExtractor:
     self.__backgroundTensor = None;
     self.__isGpuAvailable = torch.cuda.is_available();
 
-  def loadVideo(self, video: cv2.VideoCapture, numberOfFramesToUse: int = 25) -> None:
+  def loadVideo(self, video: VideoCapture, numberOfFramesToUse: int = 25) -> None:
     framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
     median = torch.median(framesTensor, dim = 0)
     self.__backgroundTensor = median.values
 
-  def loadVideoResiliently(self, video: cv2.VideoCapture, numberOfFramesToUse: int = 25, maximumMedianDifference: float = 0.1, maximumRetries: int = 10) -> None:
+  def loadVideoResiliently(self, video: VideoCapture, numberOfFramesToUse: int = 25, maximumMedianDifference: float = 0.1, maximumRetries: int = 10) -> None:
     framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
     median = torch.median(framesTensor, dim = 0)
     self.__backgroundTensor = median.values
@@ -28,14 +28,14 @@ class VideoBackgroundExtractor:
       self.__backgroundTensor = median.values
       frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
 
-  def isVideoCameraStatic(self, video: cv2.VideoCapture, numberOfFramesToUse: int = 25, maximumMedianDifference: float = 0.1) -> None:
+  def isVideoCameraStatic(self, video: VideoCapture, numberOfFramesToUse: int = 25, maximumMedianDifference: float = 0.1) -> None:
     framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
     median = torch.median(framesTensor, dim = 0)
     self.__backgroundTensor = median.values
     frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
     return medianDifference.item() <= maximumMedianDifference
 
-  def __getRandomFramesTensorFromVideo(self, video: cv2.VideoCapture, numberOfFramesToUse: int) -> torch.Tensor:
+  def __getRandomFramesTensorFromVideo(self, video: VideoCapture, numberOfFramesToUse: int) -> torch.Tensor:
     frames = self.__getRandomFramesFromVideo(video, numberOfFramesToUse)
     # Conversion to numpy array significantly improves performance for conversion to tensor
     framesTensor = torch.from_numpy(np.asarray(frames))
@@ -43,7 +43,7 @@ class VideoBackgroundExtractor:
       framesTensor = framesTensor.cuda()
     return framesTensor
 
-  def __getRandomFramesFromVideo(self, video: cv2.VideoCapture, numberOfFramesToUse: int) -> List[Image]:
+  def __getRandomFramesFromVideo(self, video: VideoCapture, numberOfFramesToUse: int) -> List[Image]:
     previousPosition = video.get(cv2.CAP_PROP_POS_FRAMES)
     frameIds = torch.mul(torch.rand(numberOfFramesToUse), (video.get(cv2.CAP_PROP_FRAME_COUNT)))
     frames = []
@@ -65,7 +65,7 @@ class VideoBackgroundExtractor:
     goodFramesTensor = framesTensor[indices]
     return goodFramesTensor
 
-  def __completeTensorWithNewFrames(self, video: cv2.VideoCapture, goodFramesTensor: torch.Tensor, numberOfFramesToUse: int) -> torch.Tensor:
+  def __completeTensorWithNewFrames(self, video: VideoCapture, goodFramesTensor: torch.Tensor, numberOfFramesToUse: int) -> torch.Tensor:
     amountOfGoodFrames = goodFramesTensor.size()[0]
     framesToGet = numberOfFramesToUse - amountOfGoodFrames
     newFramesTensor = self.__getRandomFramesTensorFromVideo(video, framesToGet)
