@@ -1,4 +1,4 @@
-from Types import Image, MonochromeImage
+from .Types import Image, MonochromeImage
 from typing import List, Tuple
 import numpy as np
 import torch
