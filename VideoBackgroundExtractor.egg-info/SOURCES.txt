@@ -6,3 +6,6 @@ VideoBackgroundExtractor.egg-info/PKG-INFO
 VideoBackgroundExtractor.egg-info/SOURCES.txt
 VideoBackgroundExtractor.egg-info/dependency_links.txt
 VideoBackgroundExtractor.egg-info/top_level.txt
+src/Types.py
+src/VideoBackgroundExtractor.py
+src/__init__.py
