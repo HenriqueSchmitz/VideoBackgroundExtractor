@@ -1,1 +1,1 @@
-from packages import VideoBackgroundExtractor
+from src import VideoBackgroundExtractor
