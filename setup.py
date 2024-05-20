@@ -5,5 +5,6 @@ setup(
     version='1.0.0',
     author="Henrique Schmitz",
     packages=find_packages(),
-    py_modules=['VideoBackgroundExtractor']
+    py_modules=['VideoBackgroundExtractor'],
+    install_requires=["typing", "numpy", "torch", "cv2"]
 )
