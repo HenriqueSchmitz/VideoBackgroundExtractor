@@ -45,3 +45,10 @@ noBackgroundFrame = extractor.removeBackground(exampleFrame)
 
 **Image with no Background:**
 ![No Background Image](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/noBackgroundImage.png)
+
+## Distribution
+
+To create a wheel for distribution, run:
+```
+pip wheel .
+```

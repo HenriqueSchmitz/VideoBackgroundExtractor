@@ -2,3 +2,4 @@ typing
 numpy
 torch
 cv2
+setuptools

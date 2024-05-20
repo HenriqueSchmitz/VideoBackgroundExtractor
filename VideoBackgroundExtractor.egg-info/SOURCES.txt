@@ -1,5 +1,6 @@
 LICENSE
 README.md
+VideoBackgroundExtractor.py
 pyproject.toml
 setup.py
 VideoBackgroundExtractor.egg-info/PKG-INFO
