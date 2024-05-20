@@ -1,5 +1,5 @@
 typing
 numpy
 torch
-cv2
+opencv-python
 setuptools

@@ -6,6 +6,6 @@ setup(
     author="Henrique Schmitz",
     packages=find_packages(),
     py_modules=['VideoBackgroundExtractor'],
-    install_requires=["typing", "numpy", "torch", "cv2"],
-    setup_requires=["typing", "numpy", "torch", "cv2"],
+    install_requires=["typing", "numpy", "torch", "opencv-python"],
+    setup_requires=["typing", "numpy", "torch", "opencv-python"],
 )
