@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='VideoBackgroundExtractor',
+    name='videobackgroundextractor',
     version='1.0.0',
     author="Henrique Schmitz",
     packages=find_packages(),
