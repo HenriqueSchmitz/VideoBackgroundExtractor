@@ -1,4 +1,3 @@
-nvidia-cuda-nvrtc-cu12,
 torch>=2.3.0
 numpy
 opencv-python
