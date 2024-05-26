@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "video-background-extractor"
-version = "1.0.4"
+version = "1.0.5"
 authors = [
   { name="Henrique Schmitz", email="sch.henrique@gmail.com" },
 ]
@@ -16,6 +16,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    nvidia-cuda-nvrtc-cu12,
     "torch>=2.3.0",
     "numpy",
     "opencv-python"
