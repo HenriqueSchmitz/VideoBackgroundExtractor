@@ -32,7 +32,7 @@ class VideoBackgroundExtractor:
     framesTensor = self.__getRandomFramesTensorFromVideo(video, numberOfFramesToUse)
     median = torch.median(framesTensor, dim = 0)
     self.__backgroundTensor = median.values
-    frameDifferencesTensor, medianDifference = self.__calculateFrameDifferences(framesTensor)
+    _, medianDifference = self.__calculateFrameDifferences(framesTensor)
     return medianDifference.item() <= maximumMedianDifference
 
   def __getRandomFramesTensorFromVideo(self, video: VideoCapture, numberOfFramesToUse: int) -> torch.Tensor:
@@ -49,7 +49,7 @@ class VideoBackgroundExtractor:
     frames = []
     for fid in frameIds:
         video.set(cv2.CAP_PROP_POS_FRAMES, fid.item())
-        ret, frame = video.read()
+        _, frame = video.read()
         frames.append(frame)
     video.set(cv2.CAP_PROP_POS_FRAMES, previousPosition)
     return frames
