@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "video-background-extractor"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
   { name="Henrique Schmitz", email="sch.henrique@gmail.com" },
 ]
@@ -17,6 +17,6 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
-    "torch",
+    "torch>=2.3.0",
     "opencv-python"
 ]
