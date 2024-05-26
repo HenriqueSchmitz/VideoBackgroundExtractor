@@ -15,7 +15,7 @@ ret, exampleFrame = video.read()
 ```
 
 **Original Image:**
-![Original Image](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/originalImage.png)
+![Original Image](https://raw.githubusercontent.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/originalImage.png)
 
 Getting background from video:
 
@@ -26,7 +26,7 @@ background = extractor.getBackgroundFrame()
 ```
 
 **Background Extracted from Video:**
-![Background from Video](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/background.png)
+![Background from Video](https://raw.githubusercontent.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/background.png)
 
 Getting image with difference to background:
 
@@ -35,7 +35,7 @@ frameDifference = extractor.getDifferenceToBackground(exampleFrame)
 ```
 
 **Difference to Background:**
-![Difference to Background](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/differenceToBackground.png)
+![Difference to Background](https://raw.githubusercontent.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/differenceToBackground.png)
 
 Getting example image with background removed:
 
@@ -44,7 +44,7 @@ noBackgroundFrame = extractor.removeBackground(exampleFrame)
 ```
 
 **Image with no Background:**
-![No Background Image](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/noBackgroundImage.png)
+![No Background Image](https://raw.githubusercontent.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/noBackgroundImage.png)
 
 ## Distribution
 
