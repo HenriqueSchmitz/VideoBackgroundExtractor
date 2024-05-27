@@ -8,7 +8,6 @@ version = "1.0.10"
 authors = [
   { name="Henrique Schmitz", email="sch.henrique@gmail.com" },
 ]
-repository = "https://github.com/HenriqueSchmitz/VideoBackgroundExtractor"
 description = "Library to extract background from static video. "
 readme = "README.md"
 requires-python = ">=3.8"
@@ -16,15 +15,18 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent",
 ]
-license = "MIT"
+license = {file = "LICENSE"}
+dependencies = [
+  "torch>=2.3.0",
+  "numpy",
+  "opencv-python"
+]
+
+[tool.poetry]
+repository = "https://github.com/HenriqueSchmitz/VideoBackgroundExtractor"
 exclude = [
   "samples/*",
   "example.mp4",
   "example.py",
   "*.pdf"
-]
-dependencies = [
-  "torch>=2.3.0",
-  "numpy",
-  "opencv-python"
 ]
