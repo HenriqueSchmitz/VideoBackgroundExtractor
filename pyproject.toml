@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "video-background-extractor"
-version = "1.0.10"
+version = "1.0.11"
 authors = [
   { name="Henrique Schmitz", email="sch.henrique@gmail.com" },
 ]
@@ -22,11 +22,5 @@ dependencies = [
   "opencv-python"
 ]
 
-[tool.poetry]
-repository = "https://github.com/HenriqueSchmitz/VideoBackgroundExtractor"
-exclude = [
-  "samples/*",
-  "example.mp4",
-  "example.py",
-  "*.pdf"
-]
+[project.urls]
+github = "https://github.com/HenriqueSchmitz/VideoBackgroundExtractor"
