@@ -5,3 +5,6 @@ build:
 
 test-deploy:
 	twine upload --repository testpypi dist/*
+
+deploy:
+	twine upload dist/*
