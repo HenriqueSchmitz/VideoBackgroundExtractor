@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "video-background-extractor"
-version = "1.0.9"
+version = "1.0.10"
 authors = [
   { name="Henrique Schmitz", email="sch.henrique@gmail.com" },
 ]
@@ -18,7 +18,10 @@ classifiers = [
 ]
 license = "MIT"
 exclude = [
-  "my_package/excluded.py"
+  "samples/*",
+  "example.mp4",
+  "example.py",
+  "*.pdf"
 ]
 dependencies = [
   "torch>=2.3.0",
