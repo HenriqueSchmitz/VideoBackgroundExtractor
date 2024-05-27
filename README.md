@@ -58,6 +58,7 @@ ret, exampleFrame = video.read()
 Getting background from video:
 
 ```
+from video_background_extractor import VideoBackgroundExtractor
 extractor = VideoBackgroundExtractor()
 extractor.loadVideo(video)
 background = extractor.getBackgroundFrame()
