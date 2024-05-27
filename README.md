@@ -28,13 +28,12 @@ _Note: The main bottleneck for loading the background is the need to decode all 
 pip install video-background-extractor
 ```
 
-### For Google Colab
+```
 
-On Google Colab, as of the publishing of this package, there is an issue with dependency resolution for torch. To fix this, torch must be installed separately before.
+### From Github
 
 ```
-pip install torch
-pip install video-background-extractor
+pip install -q git+https://github.com/HenriqueSchmitz/VideoBackgroundExtractor@dist
 ```
 
 ## Usage
