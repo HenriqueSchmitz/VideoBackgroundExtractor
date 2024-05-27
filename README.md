@@ -28,8 +28,6 @@ _Note: The main bottleneck for loading the background is the need to decode all 
 pip install video-background-extractor
 ```
 
-```
-
 ### From Github
 
 ```
