@@ -5,9 +5,16 @@ import torch
 import cv2
 
 class VideoBackgroundExtractor:
-  def __init__(self):
+  def __init__(self, isGpuUseAllowed=True):
+    """
+    Parameters:
+    - isGpuUseAllowed: allows the user to force this class to use cpu processing even if gpu is available
+    """
     self.__backgroundTensor = None;
-    self.__isGpuAvailable = torch.cuda.is_available();
+    if isGpuUseAllowed:
+      self.__isGpuAvailable = torch.cuda.is_available()
+    else:
+      self.__isGpuAvailable = False
 
   def loadVideo(
     self,
