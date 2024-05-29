@@ -1,6 +1,4 @@
-from typing import List, NewType
-import cv2
+from typing import List
 
 Image = List[List[List[int]]]
 MonochromeImage = List[List[int]]
-VideoCapture = NewType("VideoCapture", cv2.VideoCapture)
