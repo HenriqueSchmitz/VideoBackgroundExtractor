@@ -232,7 +232,7 @@ class VideoBackgroundExtractor:
   def removeBackground(
     self,
     image: Image,
-    thresholdFactor: float = 1,
+    thresholdFactor: float = 2,
     differenceIndexLimit: float = 0.2
   ) -> Image:
     """
