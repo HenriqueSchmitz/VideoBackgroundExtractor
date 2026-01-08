@@ -90,5 +90,5 @@ Getting example image with background grayed out:
 grayscaleBackgroundFrame = extractor.grayOutBackground(exampleFrame)
 ```
 
-**Image with no Background:**
+**Image with Grayscale Background:**
 ![No Background Image](https://github.com/HenriqueSchmitz/VideoBackgroundExtractor/blob/main/samples/grayscaleBackgroundImage.png?raw=true)
