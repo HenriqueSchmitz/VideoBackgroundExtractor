@@ -120,8 +120,20 @@ class VideoBackgroundExtractor:
         if isinstance(video, VideoCapture):
             return self.__getRandomFramesFromOpenCvVideo(video, numberOfFramesToUse)
         if isinstance(video, str):
-            container = av.open(video)
-            return self.__getRandomFramesFromAvContainer(container, numberOfFramesToUse)
+            try:
+                with av.open(video) as container:
+                    if not container.streams.video:
+                        raise ValueError("No video stream found in container.")
+                    return self.__getRandomFramesFromAvContainer(container, numberOfFramesToUse)
+            except Exception as e:
+                warnings.warn(f"PyAV failed to load video. Falling back to OpenCV (slower).")
+                capture = cv2.VideoCapture(video)
+                try:
+                    if not capture.isOpened():
+                        raise IOError(f"Cannot open video {video} with OpenCV.")
+                    return self.__getRandomFramesFromOpenCvVideo(capture, numberOfFramesToUse)
+                finally:
+                    capture.release()
         if isinstance(video, InputContainer):
             return self.__getRandomFramesFromAvContainer(video, numberOfFramesToUse)
         raise TypeError("Video must be of type str, InputContainer or VideoCapture")
@@ -148,7 +160,16 @@ class VideoBackgroundExtractor:
         numberOfFramesToUse: int
     ) -> List[Image]:
         stream = container.streams.video[0]
-        frameIds = torch.mul(torch.rand(numberOfFramesToUse), (stream.duration)).sort()[0]
+        duration = stream.duration
+        if duration is None:
+            if container.duration is not None:
+                # container.duration is in microseconds (AV_TIME_BASE = 1,000,000)
+                # We must convert this to the stream's time_base units for seeking
+                # Formula: (container_duration_us / 1M) / stream_time_base
+                duration = int(container.duration / 1000000 / float(stream.time_base))
+            else:
+                raise ValueError("Could not determine video duration via PyAV")
+        frameIds = torch.mul(torch.rand(numberOfFramesToUse), (duration)).sort()[0]
         frames = []
         has_enough_keyframes = self.__has_min_number_of_keyframes(container, numberOfFramesToUse)
         any_frame = not has_enough_keyframes
