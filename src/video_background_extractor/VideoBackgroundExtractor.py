@@ -1,9 +1,14 @@
-from .Types import Image, MonochromeImage
 from typing import List, Tuple
+import warnings
+
+import av
+import cv2
 import numpy as np
 import torch
-import cv2
+from av.container import InputContainer
+from cv2 import VideoCapture
 
+from .Types import Image, MonochromeImage
 
 class VideoBackgroundExtractor:
     def __init__(self, isGpuUseAllowed=True):
@@ -19,7 +24,7 @@ class VideoBackgroundExtractor:
 
     def loadVideo(
         self,
-        video: cv2.VideoCapture,
+        video: str | InputContainer | VideoCapture,
         numberOfFramesToUse: int = 25
     ) -> None:
         """
@@ -37,7 +42,7 @@ class VideoBackgroundExtractor:
 
     def loadVideoResiliently(
         self,
-        video: cv2.VideoCapture,
+        video: str | InputContainer | VideoCapture,
         numberOfFramesToUse: int = 25,
         maximumMedianDifference: float = 0.1,
         maximumRetries: int = 10
@@ -74,7 +79,7 @@ class VideoBackgroundExtractor:
 
     def isVideoCameraStatic(
         self,
-        video: cv2.VideoCapture,
+        video: str | InputContainer | VideoCapture,
         numberOfFramesToUse: int = 25,
         maximumMedianDifference: float = 0.1
     ) -> bool:
@@ -99,7 +104,7 @@ class VideoBackgroundExtractor:
 
     def __getRandomFramesTensorFromVideo(
         self,
-        video: cv2.VideoCapture,
+        video: str | InputContainer | VideoCapture,
         numberOfFramesToUse: int
     ) -> torch.Tensor:
         frames = self.__getRandomFramesFromVideo(video, numberOfFramesToUse)
@@ -109,18 +114,66 @@ class VideoBackgroundExtractor:
 
     def __getRandomFramesFromVideo(
         self,
-        video: cv2.VideoCapture,
+        video: str | InputContainer | VideoCapture,
         numberOfFramesToUse: int
     ) -> List[Image]:
+        if isinstance(video, VideoCapture):
+            return self.__getRandomFramesFromOpenCvVideo(video, numberOfFramesToUse)
+        if isinstance(video, str):
+            container = av.open(video)
+            return self.__getRandomFramesFromAvContainer(container, numberOfFramesToUse)
+        if isinstance(video, InputContainer):
+            return self.__getRandomFramesFromAvContainer(video, numberOfFramesToUse)
+        raise TypeError("Video must be of type str, InputContainer or VideoCapture")
+
+    def __getRandomFramesFromOpenCvVideo(
+        self,
+        video: VideoCapture,
+        numberOfFramesToUse: int
+    ) -> List[Image]:
+        warnings.warn("Passing OpenCV videos to this function is not recommended as it is significantly slower")
         previousPosition = video.get(cv2.CAP_PROP_POS_FRAMES)
-        frameIds = torch.mul(torch.rand(numberOfFramesToUse), (video.get(cv2.CAP_PROP_FRAME_COUNT)))
+        frameIds = torch.mul(torch.rand(numberOfFramesToUse), (video.get(cv2.CAP_PROP_FRAME_COUNT))).sort()[0]
         frames = []
         for fid in frameIds:
-            video.set(cv2.CAP_PROP_POS_FRAMES, fid.item())
+            video.set(cv2.CAP_PROP_POS_FRAMES, int(fid.item()))
             _, frame = video.read()
             frames.append(frame)
         video.set(cv2.CAP_PROP_POS_FRAMES, previousPosition)
         return frames
+
+    def __getRandomFramesFromAvContainer(
+        self,
+        container: InputContainer,
+        numberOfFramesToUse: int
+    ) -> List[Image]:
+        stream = container.streams.video[0]
+        frameIds = torch.mul(torch.rand(numberOfFramesToUse), (stream.duration)).sort()[0]
+        frames = []
+        has_enough_keyframes = self.__has_min_number_of_keyframes(container, numberOfFramesToUse)
+        any_frame = not has_enough_keyframes
+        for fid in frameIds:
+            container.seek(int(fid.item()), stream=stream, any_frame=any_frame, backward=True) 
+            for decoded in container.decode(video=0):
+                frame = decoded.to_ndarray(format='bgr24')
+                frames.append(frame)
+                break
+        container.seek(0, any_frame=False, backward=True)
+        return frames
+    
+    def __has_min_number_of_keyframes(
+        self,
+        container: InputContainer,
+        minimum_number_of_keyframes: int
+    ) -> bool:
+        stream = container.streams.video[0]
+        count = 0
+        for packet in container.demux(stream):
+            if packet.is_keyframe:
+                count += 1
+                if count >= minimum_number_of_keyframes:
+                    return True
+        return False
 
     def __calculateFrameDifferences(self, framesTensor: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         frameDifferencesTensor = torch.tensor([self.__calculateDifferenceIndex(frameTensor)
@@ -141,7 +194,7 @@ class VideoBackgroundExtractor:
 
     def __completeTensorWithNewFrames(
         self,
-        video: cv2.VideoCapture,
+        video: VideoCapture,
         goodFramesTensor: torch.Tensor,
         numberOfFramesToUse: int
     ) -> torch.Tensor:
