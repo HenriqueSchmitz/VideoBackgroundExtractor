@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "video-background-extractor"
-version = "1.4.0"
+version = "1.4.1"
 authors = [
   { name="Henrique Schmitz", email="sch.henrique@gmail.com" },
 ]

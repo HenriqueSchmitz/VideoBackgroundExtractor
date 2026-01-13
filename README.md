@@ -44,7 +44,7 @@ Getting example image:
 
 ```
 import cv2
-video = cv2.VideoCapture(example.mp4)
+video = cv2.VideoCapture("example.mp4")
 video.set(cv2.CAP_PROP_POS_FRAMES, 3000)
 ret, exampleFrame = video.read()
 ```
@@ -57,7 +57,7 @@ Getting background from video:
 ```
 from video_background_extractor import VideoBackgroundExtractor
 extractor = VideoBackgroundExtractor()
-extractor.loadVideo(video)
+extractor.loadVideo("example.mp4")
 background = extractor.getBackgroundFrame()
 ```
 
