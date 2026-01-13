@@ -261,7 +261,7 @@ class VideoBackgroundExtractor:
 
     def __calculateDifferenceIndex(self, imageTensor: torch.Tensor) -> float:
         differenceTensor = self.__getDifferenceTensor(imageTensor.to(torch.int16))
-        differenceMean = torch.div(torch.mean(differenceTensor.double()), 255)
+        differenceMean = torch.div(torch.mean(differenceTensor.float()), 255)
         return differenceMean.item()
 
     def removeBackground(
@@ -298,7 +298,7 @@ class VideoBackgroundExtractor:
         isZerosWhenDifferenceLimitExceeded: bool = False
     ) -> torch.Tensor:
         differenceTensor = self.__getDifferenceTensor(imageTensor)
-        differenceMean = torch.mean(differenceTensor.double())
+        differenceMean = torch.mean(differenceTensor.float())
         differenceIndex = torch.div(differenceMean, 255)
         if differenceIndex <= differenceIndexLimit:
             differenceThreshold = torch.mul(differenceMean, thresholdFactor)
