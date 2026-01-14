@@ -1,5 +1,6 @@
-from typing import List, Tuple
+import os
 import warnings
+from typing import List, Tuple
 
 import av
 import cv2
@@ -120,12 +121,14 @@ class VideoBackgroundExtractor:
         if isinstance(video, VideoCapture):
             return self.__getRandomFramesFromOpenCvVideo(video, numberOfFramesToUse)
         if isinstance(video, str):
+            if not os.path.isfile(video):
+                raise ValueError("Provided video path is not a file.")
             try:
                 with av.open(video) as container:
                     if not container.streams.video:
                         raise ValueError("No video stream found in container.")
                     return self.__getRandomFramesFromAvContainer(container, numberOfFramesToUse)
-            except Exception as e:
+            except Exception as _:
                 warnings.warn(f"PyAV failed to load video. Falling back to OpenCV (slower).")
                 capture = cv2.VideoCapture(video)
                 try:
