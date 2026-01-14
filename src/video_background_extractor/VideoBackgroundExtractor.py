@@ -119,6 +119,7 @@ class VideoBackgroundExtractor:
         numberOfFramesToUse: int
     ) -> List[Image]:
         if isinstance(video, VideoCapture):
+            warnings.warn("Passing OpenCV videos to this function is not recommended as it is significantly slower")
             return self.__getRandomFramesFromOpenCvVideo(video, numberOfFramesToUse)
         if isinstance(video, str):
             if not os.path.isfile(video):
@@ -146,7 +147,6 @@ class VideoBackgroundExtractor:
         video: VideoCapture,
         numberOfFramesToUse: int
     ) -> List[Image]:
-        warnings.warn("Passing OpenCV videos to this function is not recommended as it is significantly slower")
         previousPosition = video.get(cv2.CAP_PROP_POS_FRAMES)
         frameIds = torch.mul(torch.rand(numberOfFramesToUse), (video.get(cv2.CAP_PROP_FRAME_COUNT))).sort()[0]
         frames = []
